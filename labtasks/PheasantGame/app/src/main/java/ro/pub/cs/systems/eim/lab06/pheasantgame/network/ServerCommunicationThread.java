@@ -29,6 +29,12 @@ public class ServerCommunicationThread extends Thread {
         this.serverHistoryTextView = serverHistoryTextView;
     }
 
+    private String getPh(String message) {
+        if (!Utilities.wordValidation(message))
+            return message;
+        return message;
+    }
+
     public void run() {
         try {
             if (socket == null) {
@@ -37,11 +43,19 @@ public class ServerCommunicationThread extends Thread {
             boolean isRunning = true;
             BufferedReader requestReader = Utilities.getReader(socket);
             PrintWriter responsePrintWriter = Utilities.getWriter(socket);
+            String message;
+            String response;
+
+            message = requestReader.readLine();
 
             while (isRunning) {
-
                 // TODO exercise 7a
-
+                response = getPh(message);
+                responsePrintWriter.println(response);
+                message = requestReader.readLine();
+                if (message.equals(Constants.END_GAME)) {
+                    isRunning = false;
+                }
             }
             socket.close();
         } catch (IOException ioException) {
