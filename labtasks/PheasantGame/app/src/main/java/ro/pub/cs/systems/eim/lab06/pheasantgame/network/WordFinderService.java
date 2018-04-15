@@ -41,10 +41,14 @@ public class WordFinderService extends AsyncTask<String, Object, List<String>> {
         }
         Document htmlPage = Jsoup.parse(content);
         List<String> wordList = new LinkedList<>();
-        for (Element element: htmlPage.getElementsByClass(Constants.WORD_TAG)) {
-            wordList.add(element.html());
+        for (Element element: htmlPage.getElementsByClass(Constants.WORD_TAG1)) {
+            for (Element e: element.getElementsByTag("a"))
+                wordList.add(e.html());
         }
-        Log.d(Constants.TAG, wordList.toString());
+        for (Element element: htmlPage.getElementsByClass(Constants.WORD_TAG2)) {
+            for (Element e: element.getElementsByTag("a"))
+                wordList.add(e.html());
+        }
         return wordList;
     }
 }

@@ -7,7 +7,8 @@ public interface Constants {
     public final static String TAG = "PheasantGame";
 
     public final static String WORD_FINDER_SERVICE_INTERNET_ADDRESS = "http://www.wordhippo.com/what-is/words-starting-with/";
-    public final static String WORD_TAG = "wordlink";
+    public final static String WORD_TAG1 = "row1";
+    public final static String WORD_TAG2 = "row2";
 
     public final static String SERVER_HOST = "localhost";
     public final static int SERVER_PORT = 2017;

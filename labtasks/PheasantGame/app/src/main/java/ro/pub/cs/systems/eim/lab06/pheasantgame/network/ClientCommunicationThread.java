@@ -6,6 +6,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -60,16 +61,55 @@ public class ClientCommunicationThread extends Thread {
             PrintWriter requestPrintWriter = Utilities.getWriter(socket);
 
             // TODO exercise 7b
-            String message = wordEditText.getText().toString();
-            String response;
+            final String message = wordEditText.getText().toString();
+            final String response;
 
             if (message.length() > 2) {
                 requestPrintWriter.println(message);
+                clientHistoryTextView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        clientHistoryTextView.setText("Client sent " + message + "\n" + clientHistoryTextView.getText().toString());
+                    }
+                });
+                mostRecentWordSent = message;
+
                 response = responseReader.readLine();
+                clientHistoryTextView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        clientHistoryTextView.setText("Client received " + response + "\n" + clientHistoryTextView.getText().toString());
+                    }
+                });
 
                 if (response.equals(Constants.END_GAME)) {
-                    
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                        wordEditText.setText("");
+                        wordEditText.setEnabled(false);
+                        sendButton.setEnabled(false);
+                        clientHistoryTextView.setText("Game ended!\n" + clientHistoryTextView.getText().toString());
+                        }
+                    });
                 }
+
+                if (!response.equals(mostRecentWordSent))
+                    mostRecentValidPrefix = response.substring(response.length() - 2);
+                wordEditText.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        wordEditText.setText(mostRecentValidPrefix);
+                        wordEditText.setSelection(mostRecentValidPrefix.length());
+                    }
+                });
+            } else {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(context, "Word must be at least 2 characters long!", Toast.LENGTH_LONG).show();
+                    }
+                });
             }
 
         } catch (IOException ioException) {
